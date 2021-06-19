@@ -43,7 +43,7 @@ export const ItemDesctiption: React.FC = () => {
                     </div>
                 </div>
                 <div className={style.movies}>
-                    <h3>Here some list of movies with {item?.name}: </h3>
+                    <h3>Here some list of movies with title {item?.name}: </h3>
                     <Movies movies={movies} />
                 </div>
             </Paper>

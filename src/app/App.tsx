@@ -2,19 +2,18 @@ import React from 'react';
 import { CharactersList } from '../CharactersList/CharactersList';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import style from './App.module.css'
-
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import { useSelector } from 'react-redux';
 import { AppRootStateType } from './store';
 import { ItemDesctiption } from '../CharacterDesc/ItemDescription';
 import { CharacterType } from '../CharactersList/characterListReducer';
+import { RequestStatusType } from './appReducer';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 
 
@@ -78,6 +77,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function App() {
   const classes = useStyles();
+  const status = useSelector<AppRootStateType, RequestStatusType>(st => st.app.status)
   const selectedItemId = useSelector<AppRootStateType, string>(st => st.app.selectedItemId)
   const allItems = useSelector<AppRootStateType, CharacterType[]>(st => st.charactersList.characters)
   const item = allItems.find(it => it.id === selectedItemId)
@@ -104,12 +104,13 @@ function App() {
               />
             </div>
           </Toolbar>
+          {status === 'loading' && <LinearProgress />}
         </AppBar>
       </div>
 
       <Switch>
         <Route exact path={"/"} render={() => <CharactersList />} />
-        <Route path={`/Character-description/${item?.name.replace(/ /g, "-")}`} render={() => <ItemDesctiption />} />
+        <Route path={`/Character-description/${item?.name.trim().replace(/ /g, "-")}`} render={() => <ItemDesctiption />} />
         <Route path={"/404"} render={() => <h1> 404: PAGE NOT FOUND</h1>} />
         <Redirect from={"*"} to={'/404'} />
       </Switch>

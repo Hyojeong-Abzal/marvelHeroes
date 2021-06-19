@@ -1,5 +1,6 @@
-import { Dispatch } from "redux"
-import { searchAPI } from "../Api/API"
+import { Dispatch } from 'redux'
+import { searchAPI } from '../Api/API'
+import { setAppStatus } from '../app/appReducer'
 
 export type MovieType = {
   Title: string
@@ -48,12 +49,25 @@ export const setSearchedMoveis = (
 }
 
 export const setSearchedMoveisTC = (title: string) => (dispatch: Dispatch) => {
+  dispatch(setAppStatus('loading'))
   searchAPI.searchFilmsByTitle(title)
-   .then(data => {
-    if (data.Response === "True") {
-        dispatch(setSearchedMoveis(data.Search))
+  .then((data) => {
+    if (data.Response === 'True') {
+      dispatch(setAppStatus('succeeded'))
+      dispatch(setSearchedMoveis(data.Search))
     }
-    
+  })
+  .catch((error) => {
+  })
+  .finally( () => {})
+}
 
-})
+
+
+//types
+
+export type ResponseType = {
+  Response: "True" | "False"
+  Error?: "string"
+  Search: MovieType[]
 }
