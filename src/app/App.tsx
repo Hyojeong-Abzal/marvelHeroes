@@ -1,7 +1,6 @@
 import React from 'react';
 import { CharactersList } from '../CharactersList/CharactersList';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { CharacterDesc } from '../CharacterDesc/CharacterDesc';
 import style from './App.module.css'
 
 import AppBar from '@material-ui/core/AppBar';
@@ -12,6 +11,10 @@ import InputBase from '@material-ui/core/InputBase';
 import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import { useSelector } from 'react-redux';
+import { AppRootStateType } from './store';
+import { ItemDesctiption } from '../CharacterDesc/ItemDescription';
+import { CharacterType } from '../CharactersList/characterListReducer';
 
 
 
@@ -75,14 +78,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function App() {
   const classes = useStyles();
-
+  const selectedItemId = useSelector<AppRootStateType, string>(st => st.app.selectedItemId)
+  const allItems = useSelector<AppRootStateType, CharacterType[]>(st => st.charactersList.characters)
+  const item = allItems.find(it => it.id === selectedItemId)
   return (
     <div className={style.app}>
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar position="static" >
           <Toolbar>
 
-            <Typography  className={classes.title} variant="h6" noWrap>
+            <Typography className={classes.title} variant="h6" noWrap>
               MARVEL
             </Typography>
             <div className={classes.search}>
@@ -102,10 +107,9 @@ function App() {
         </AppBar>
       </div>
 
-
       <Switch>
         <Route exact path={"/"} render={() => <CharactersList />} />
-        <Route path={"/Character-describtion"} render={() => <CharacterDesc />} />
+        <Route path={`/Character-description/${item?.name.replace(/ /g, "-")}`} render={() => <ItemDesctiption />} />
         <Route path={"/404"} render={() => <h1> 404: PAGE NOT FOUND</h1>} />
         <Redirect from={"*"} to={'/404'} />
       </Switch>

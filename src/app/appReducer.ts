@@ -1,29 +1,26 @@
 import React from 'react'
-import { v1 } from 'uuid'
 
-const initialState = {
-  selectedCharacter: 'rundom',
+export const appInitialState = {
+  selectedItemId: '',
 }
 
+export const setSelectedItemId = (itemId: string) =>
+  ({ type: 'APP/SET_SELECTED_ITEM', itemId } as const)
+
 export const appReducer = (
-  state = initialState,
-  action: ActionsType
-): InitialStateType => {
+  state: AppInitialStateType = appInitialState,
+  action: ActionType
+): AppInitialStateType => {
   switch (action.type) {
-    case 'APP/SET_SELECTED_CHARACTER':
-      debugger
-      return { ...state, selectedCharacter: action.id }
+    case 'APP/SET_SELECTED_ITEM':
+      return { ...state, selectedItemId: action.itemId }
     default:
-      return { ...state }
+      return state
   }
 }
 
-export type InitialStateType = typeof initialState
+// types
 
-export const setSelectedCharacter = (id: string) =>
-  ({ type: 'APP/SET_SELECTED_CHARACTER', id } as const)
-
-export type setSelectedCharacterType = ReturnType<typeof setSelectedCharacter>
-
-type ActionsType = setSelectedCharacterType
-
+export type AppInitialStateType = typeof appInitialState
+export type ActionType = SetSelectedItemType
+export type SetSelectedItemType = ReturnType<typeof setSelectedItemId>

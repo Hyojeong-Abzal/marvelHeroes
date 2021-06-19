@@ -1,26 +1,14 @@
-import { appReducer, InitialStateType, setCharacterDescMode, setSelectedCharacter } from './../appReducer';
 import React from 'react'
-import { exId } from '../../CharactersList/characterList-reducer'
-import { v1 } from 'uuid';
+import {
+  AppInitialStateType,
+  appReducer,
+  setSelectedItemId,
+} from '../appReducer'
 
 test('correct id should be set', () => {
-  let InitialState: InitialStateType = {
-    characterDescMode: false,
-    selectedCharacter: exId,
+  let InitialState: AppInitialStateType = {
+    selectedItemId: 'rundom',
   }
-  let id = v1();
-  const endState = appReducer(InitialState, setSelectedCharacter(id))
-  expect(endState.selectedCharacter).toBe(id)
+  const endState = appReducer(InitialState, setSelectedItemId('id'))
+  expect(endState.selectedItemId).toBe('id')
 })
-
-
-test('correct value should be set', () => {
-    let InitialState: InitialStateType = {
-      characterDescMode: false,
-      selectedCharacter: exId,
-    }
- 
-    const endState = appReducer(InitialState, setCharacterDescMode(true))
-    expect(endState.characterDescMode).toBe(true)
-  })
-  

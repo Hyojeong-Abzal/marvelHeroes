@@ -1,20 +1,16 @@
 .wrapper {
-  width: 500px;
-  padding: 10px;
-  background-color: white;
-}
-
-.smallPic {
+  padding: 20px;
   display: flex;
-  justify-content: center;
-  border-bottom: 1px solid blue;
+}
+.img {
+  padding: 10px;
+}
+.desc {
+  padding: 10px;
 }
 .title {
   font-family: 'Title';
   font-weight: 700;
-}
-.describtion {
-  padding: 20px;
 }
 
 .tag {
@@ -61,4 +57,10 @@
 
 .tag:hover::after {
   border-left-color: crimson;
+}
+
+
+.wiki{
+  text-decoration: none;
+  color: white;
 }
