@@ -1,5 +1,6 @@
 import React from 'react'
 import { v1 } from 'uuid'
+import { inputValuesType } from '../components/AddItem/AddItem'
 
 const initialState = {
   characters: [
@@ -43,7 +44,7 @@ const initialState = {
       id: v1(),
       name: 'Captain Marvel',
       description:
-        'Carol Danvers is a fictional character that appears in comic books published by Marvel Comics.',
+        'Carol Danvers is a fictional character appearing in American comic books published by Marvel Comics. Created by writer Roy Thomas and artist Gene Colan, Danvers first appeared as an officer in the United States Air Force and a colleague of the Kree superhero Mar-Vell in Marvel Super-Heroes #13 (March 1968). Danvers later became the first incarnation of Ms. Marvel in Ms. Marvel #1 (cover-dated Jan. 1977) after her DNA was fused with Mar-Vell"s during an explosion, giving her superhuman powers. Debuting in the Silver Age of comics, the character was featured in a self-titled series in the late 1970s before becoming associated with the superhero teams the Avengers and the X-Men. The character has also been known as Binary, Warbird and Captain Marvel at various points in her history. Danvers has been labeled as Marvel"s most notable female hero,[2] and frequently described as one of the most powerful characters in the franchise',
       tags: ['Rich', 'Smart'],
       smallPicture:
         'https://kvmarvel.ru/wp-content/uploads/2018/03/captain-marvel-photo-286x400.png',
@@ -290,20 +291,39 @@ const initialState = {
     },
   ],
 }
+export enum ITEMS_LIST_AT {
+  ADD_ITEM = 'ADD_ITEM',
+}
 
-export const charactersListReducer = (
+export const itemsListReducer = (
   state: InitialStateType = initialState,
-  action: any
+  action: ActionType
 ): InitialStateType => {
   switch (action.type) {
+    case ITEMS_LIST_AT.ADD_ITEM:
+      let newItem: ItemType = {
+        id: v1(),
+        name: action.item.name,
+        description: action.item.description,
+        smallPicture: action.item.file,
+        largePicture: '',
+        wiki: '',
+        tags: action.item.tag.split(','),
+      }
+
+      return { ...state, characters: [newItem, ...state.characters] }
     default:
-      return { ...state }
+      return state
   }
 }
 
-export type InitialStateType = typeof initialState
+export const addItem = (item: inputValuesType) =>
+  ({ type: 'ADD_ITEM', item } as const)
 
-export type CharacterType = {
+//types
+export type InitialStateType = typeof initialState
+type ActionType = addItemType
+export type ItemType = {
   id: string
   name: string
   description: string
@@ -312,3 +332,5 @@ export type CharacterType = {
   largePicture: string
   wiki: string
 }
+
+export type addItemType = ReturnType<typeof addItem>

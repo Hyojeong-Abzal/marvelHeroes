@@ -1,6 +1,7 @@
 .wrapper {
   width: 100vw;
   padding: 10px;
+  background-color: #dbdff5;
 }
 .item {
   width: 300px;

@@ -4,9 +4,10 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppRootStateType } from '../app/store'
-import { CharacterType } from '../CharactersList/characterListReducer'
+import { ItemType } from '../ItemsList/itemsListReducer'
+import Message from '../components/Jarvis/Message/Message'
 import { Movies } from '../Movies/Movies'
-import { MovieType, setSearchedMoveisTC } from '../Movies/SearchReducer'
+import { MovieType, setSearchedMoveisTC } from '../Movies/movieReducer'
 import style from './ItemDesk.module.css'
 
 export const ItemDesctiption: React.FC = () => {
@@ -18,7 +19,9 @@ export const ItemDesctiption: React.FC = () => {
     }, [])
     const movies = useSelector<AppRootStateType, MovieType[]>(st => st.movies.movies)
     const selectedItemId = useSelector<AppRootStateType, string>(st => st.app.selectedItemId)
-    const allItems = useSelector<AppRootStateType, CharacterType[]>(st => st.charactersList.characters)
+    const allItems = useSelector<AppRootStateType, ItemType[]>(st => st.itemsList.characters)
+    const isFound = useSelector<AppRootStateType, boolean>(st => st.movies.isFound)
+
     const item = allItems.find(it => it.id === selectedItemId)
 
     return (
@@ -43,8 +46,17 @@ export const ItemDesctiption: React.FC = () => {
                     </div>
                 </div>
                 <div className={style.movies}>
-                    <h3>Here some list of movies with title {item?.name}: </h3>
-                    <Movies movies={movies} />
+                    {isFound
+                        ?
+                        <div>
+                            <Message message={`Here some list of movies with title "${item?.name}" :`} />
+                            <Movies movies={movies} />
+                        </div>
+                        :
+                        <Message message={` I could'n find any movies with this title "${item?.name}" `} />
+                    }
+
+
                 </div>
             </Paper>
         </div>

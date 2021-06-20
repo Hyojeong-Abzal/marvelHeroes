@@ -1,7 +1,7 @@
 import { Grid, Paper } from '@material-ui/core';
 import React, { useState } from 'react';
 import s from './Movies.module.css'
-import { MovieType } from './SearchReducer';
+import { MovieType } from './movieReducer';
 
 type MoviesPropsType = {
     movies: MovieType[]

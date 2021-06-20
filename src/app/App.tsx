@@ -1,5 +1,5 @@
 import React from 'react';
-import { CharactersList } from '../CharactersList/CharactersList';
+import { ItemsList } from '../ItemsList/ItemsList';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import style from './App.module.css'
 import AppBar from '@material-ui/core/AppBar';
@@ -8,12 +8,14 @@ import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppRootStateType } from './store';
-import { ItemDesctiption } from '../CharacterDesc/ItemDescription';
-import { CharacterType } from '../CharactersList/characterListReducer';
-import { RequestStatusType } from './appReducer';
+import { ItemDesctiption } from '../ItemDesc/ItemDescription';
+import { ItemType } from '../ItemsList/itemsListReducer';
+import { RequestStatusType, setAppError } from './appReducer';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { ErrorSnackbar } from '../components/ErrorSnackbar/ErrorSnackbar';
+import { AddItem } from '../components/AddItem/AddItem';
 
 
 
@@ -75,14 +77,23 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 
+
 function App() {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const status = useSelector<AppRootStateType, RequestStatusType>(st => st.app.status)
   const selectedItemId = useSelector<AppRootStateType, string>(st => st.app.selectedItemId)
-  const allItems = useSelector<AppRootStateType, CharacterType[]>(st => st.charactersList.characters)
+  const allItems = useSelector<AppRootStateType, ItemType[]>(st => st.itemsList.characters)
   const item = allItems.find(it => it.id === selectedItemId)
+  const isOnline = navigator.onLine
+  if (!isOnline) {
+    dispatch(setAppError("No internet connection"))
+    return <ErrorSnackbar />
+  }
   return (
     <div className={style.app}>
+      
+      <ErrorSnackbar />
       <div className={classes.root}>
         <AppBar position="static" >
           <Toolbar>
@@ -107,9 +118,8 @@ function App() {
           {status === 'loading' && <LinearProgress />}
         </AppBar>
       </div>
-
       <Switch>
-        <Route exact path={"/"} render={() => <CharactersList />} />
+        <Route exact path={"/"} render={() => <ItemsList />} />
         <Route path={`/Character-description/${item?.name.trim().replace(/ /g, "-")}`} render={() => <ItemDesctiption />} />
         <Route path={"/404"} render={() => <h1> 404: PAGE NOT FOUND</h1>} />
         <Redirect from={"*"} to={'/404'} />
