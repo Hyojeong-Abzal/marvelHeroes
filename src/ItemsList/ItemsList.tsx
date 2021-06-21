@@ -11,7 +11,7 @@ import { AddBox } from '@material-ui/icons'
 
 
 export const ItemsList: React.FC = () => {
-  const [editMode, setEditMode] = useState(false)
+    const [editMode, setEditMode] = useState(false)
     const items = useSelector<AppRootStateType, ItemType[]>(state => state.itemsList.characters)
     return (
         <div className={style.wrapper}>
@@ -43,6 +43,7 @@ export const ItemsList: React.FC = () => {
                                     tags={c.tags}
                                     description={c.description}
                                     smallPic={c.smallPicture}
+                                    localStorage={c.localStorage}
                                 />
                             </Paper>
                         </Grid>

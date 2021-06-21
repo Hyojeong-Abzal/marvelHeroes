@@ -19,6 +19,7 @@
 }
 .describtion {
   padding: 20px;
+  min-width: 360px;
 }
 
 .tag {
@@ -65,4 +66,9 @@
 
 .tag:hover::after {
   border-left-color: crimson;
+}
+
+.descriptionText {
+  overflow: hidden;
+  height: 85px;
 }

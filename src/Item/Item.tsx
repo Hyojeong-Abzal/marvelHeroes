@@ -5,6 +5,9 @@ import style from './Item.module.css'
 import { Link } from 'react-router-dom'
 import ReactTypingEffect from 'react-typing-effect';
 import { RoutePath } from '../app/App';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { deleteItem } from '../ItemsList/itemsListReducer';
 
 type CharacterPropsType = {
     id: number
@@ -12,13 +15,17 @@ type CharacterPropsType = {
     tags: string[]
     description: string
     smallPic: string
+    localStorage?: boolean
 
 }
 
 export const Item: React.FC<CharacterPropsType> = (props) => {
     const dispatch = useDispatch();
 
-    const onClickHadler = () => {
+    const addHandeler = () => {
+    }
+    const deleteHandler = () => {
+        dispatch(deleteItem(props.id))
     }
     let desc = props.description.substring(0, 145)
     function getRandomInRange(min: number, max: number) {
@@ -39,11 +46,11 @@ export const Item: React.FC<CharacterPropsType> = (props) => {
                     />
                 }</h1>
                 {props.tags.map(t => <span className={style.tag}>{t}</span>)}
-                <p>{desc}...</p>
+                <p className={style.descriptionText}>{desc}...</p>
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={onClickHadler}
+                    onClick={addHandeler}
                 >
                     <Link
                         style={{ color: 'white', textDecoration: "none" }}
@@ -52,6 +59,10 @@ export const Item: React.FC<CharacterPropsType> = (props) => {
                         read more
                     </Link>
                 </Button>
+                {props.localStorage && <IconButton onClick={deleteHandler} >
+                    <DeleteIcon fontSize="small" />
+                </IconButton>
+                }
             </div>
         </div>
     )

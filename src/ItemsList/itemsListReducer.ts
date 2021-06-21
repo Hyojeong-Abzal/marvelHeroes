@@ -290,8 +290,9 @@ const initialState = {
     },
   ],
 }
-export enum ITEMS_LIST_AT {
-  ADD_ITEM = 'ADD_ITEM',
+export enum ITEMS_LIST {
+  ADD_ITEM = 'ITEMS_LIST/ADD_ITEM',
+  DELETE_ITEM = 'ITEMS_LIST/DELETE_ITEM',
 }
 
 export const itemsListReducer = (
@@ -299,29 +300,39 @@ export const itemsListReducer = (
   action: ActionType
 ): InitialStateType => {
   switch (action.type) {
-    case ITEMS_LIST_AT.ADD_ITEM:
+    case ITEMS_LIST.ADD_ITEM:
       let newItem: ItemType = {
-        id: 26,
+        id: Date.now(),
         name: action.item.name,
         description: action.item.description,
         smallPicture: action.item.url,
         largePicture: '',
         wiki: '',
         tags: action.item.tags.split(','),
+        localStorage: true,
+      }
+      return { ...state, characters: [newItem, ...state.characters] }
+    case ITEMS_LIST.DELETE_ITEM:
+      return {
+        ...state,
+        characters: state.characters.filter(
+          (itmem) => itmem.id !== action.itemId
+        ),
       }
 
-      return { ...state, characters: [newItem, ...state.characters] }
     default:
       return state
   }
 }
 
 export const addItem = (item: inputValuesType) =>
-  ({ type: 'ADD_ITEM', item } as const)
+  ({ type: ITEMS_LIST.ADD_ITEM, item } as const)
 
+export const deleteItem = (itemId: number) =>
+  ({ type: ITEMS_LIST.DELETE_ITEM, itemId } as const)
 //types
 export type InitialStateType = typeof initialState
-type ActionType = addItemType
+type ActionType = AddItemType | DeleteItemType
 export type ItemType = {
   id: number
   name: string
@@ -330,6 +341,8 @@ export type ItemType = {
   smallPicture: string
   largePicture: string
   wiki: string
+  localStorage?: boolean
 }
 
-export type addItemType = ReturnType<typeof addItem>
+export type AddItemType = ReturnType<typeof addItem>
+export type DeleteItemType = ReturnType<typeof deleteItem>

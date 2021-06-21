@@ -34,14 +34,14 @@ export const AddItem: React.FC<AddItemPropsType> = (props) => {
     type FormErrorType = {
         name?: string
         description?: string
-        file?: string
         tags?: string
     }
     const formik = useFormik({
         initialValues: {
             name: '',
             description: '',
-            tags: ''
+            tags: '',
+
         },
         validate: (values) => {
             const errors: FormErrorType = {};
@@ -51,8 +51,14 @@ export const AddItem: React.FC<AddItemPropsType> = (props) => {
             if (!values.description) {
                 errors.description = 'Required';
             }
+            if (values.description.length < 150) {
+                errors.description = 'at least 150 elements are required'
+            }
             if (!values.tags) {
                 errors.tags = 'Required';
+            }
+            if (values.tags.length > 50) {
+                errors.tags = 'value is over than allawed '
             }
             return errors;
         },
@@ -70,7 +76,6 @@ export const AddItem: React.FC<AddItemPropsType> = (props) => {
     const uploader = (file: any) => {
         const reader = new FileReader();
         reader.addEventListener('load', () => {
-            debugger
             //@ts-ignore
             localStorage.setItem('recent-image', reader.result)
         })
@@ -108,11 +113,13 @@ export const AddItem: React.FC<AddItemPropsType> = (props) => {
                             <input
                                 type="file"
                                 accept="image/*"
-                                onChange={e => uploader(e.target.files![0])}
-
+                                onChange={e => {
+                                    if (!e.target.files) return
+                                    uploader(e.target.files[0])
+                                }}
+                                name="fileInput"
                             />
-                            {/* {formik.touched.file &&
-                                formik.errors.file ? <div className={style.error}>{formik.errors.file}</div> : null} */}
+                            <div className={style.error}>Required</div>
                             <TextField
                                 variant="outlined"
                                 label="tags(separate with comma)"
