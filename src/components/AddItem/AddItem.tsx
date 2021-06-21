@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -9,28 +9,39 @@ import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import Paper from '@material-ui/core/Paper/Paper';
 import { addItem } from '../../ItemsList/itemsListReducer';
+import style from './AddItem.module.css'
+import IconButton from '@material-ui/core/IconButton/IconButton';
+import CancelIcon from '@material-ui/icons/Cancel';
+import SaveIcon from '@material-ui/icons/Save';
 
 export type inputValuesType = {
     name: string
     description: string
-    file: string
-    tag: string
+    url: string
+    tags: string
 }
-export const AddItem = () => {
+type AddItemPropsType = {
+    onClickHandler: (value: boolean) => void
+}
+export const AddItem: React.FC<AddItemPropsType> = (props) => {
+    const [url, setUrl] = useState('');
+    useEffect(() => {
+        // @ts-ignore
+        setUrl(localStorage.getItem('recent-image'));
+    }, [localStorage.getItem('recent-image')])
     const dispatch = useDispatch();
 
     type FormErrorType = {
         name?: string
         description?: string
         file?: string
-        tag?: string
+        tags?: string
     }
     const formik = useFormik({
         initialValues: {
             name: '',
             description: '',
-            file: '',
-            tag: ''
+            tags: ''
         },
         validate: (values) => {
             const errors: FormErrorType = {};
@@ -40,89 +51,100 @@ export const AddItem = () => {
             if (!values.description) {
                 errors.description = 'Required';
             }
-            if (!values.file) {
-                errors.file = 'Required';
+            if (!values.tags) {
+                errors.tags = 'Required';
             }
-            if (!values.tag) {
-                errors.tag = 'Required';
-            }
-            
             return errors;
         },
         onSubmit: values => {
-
-            dispatch(addItem(values))
+            props.onClickHandler(false)
             alert(JSON.stringify(values));
+            let newItem = {
+                ...values,
+                url
+            }
+            dispatch(addItem(newItem))
             formik.resetForm()
-        },
-        
-
-      
+        }
     })
-debugger
-    return <div>
+    const uploader = (file: any) => {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+            debugger
+            //@ts-ignore
+            localStorage.setItem('recent-image', reader.result)
+        })
+        reader.readAsDataURL(file);
+    }
+    return <div className={style.wrapper}>
         <Paper elevation={10}>
-
-            <form onSubmit={formik.handleSubmit}>
-                <FormControl>
-                    <FormLabel>
-                        <p>To log in get registered
-                            <a href={'https://social-network.samuraijs.com/'}
-                                target={'_blank'}>here
-                            </a>
-                        </p>
-                        <p>or use common test account credentials:</p>
-                        <p>Email: free@samuraijs.com</p>
-                        <p>Password: free</p>
-                    </FormLabel>
-                    <FormGroup>
-                        <TextField
-                            variant="outlined"
-                            label="name"
-                            margin="normal"
-                            {...formik.getFieldProps('name')}
-                        />
-                        {formik.touched.name &&
-                            formik.errors.name ? <div style={{ color: 'red' }}>{formik.errors.name}</div> : null}
+            <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+            >
+                <Button
+                    onClick={() => props.onClickHandler(false)}
+                    variant="contained"
+                    color="primary"
+                >
+                    <CancelIcon />
+                </Button>
 
 
+                <form onSubmit={formik.handleSubmit}>
+                    <FormControl>
+                        <FormGroup row>
+                            <TextField
+                                variant="outlined"
+                                label="name"
+                                margin="normal"
+                                {...formik.getFieldProps('name')}
+                            />
+                            {formik.touched.name &&
+                                formik.errors.name ? <div className={style.error}>{formik.errors.name}</div> : null}
 
-                        <TextField
-                            type="file"
-                            variant="outlined"
-                            label="Enter URL of picture"
-                            margin="normal"
-                            {...formik.getFieldProps('file')}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={e => uploader(e.target.files![0])}
 
-                        />
-                        {formik.touched.file &&
-                            formik.errors.file ? <div style={{ color: 'red' }}>{formik.errors.file}</div> : null}
+                            />
+                            {/* {formik.touched.file &&
+                                formik.errors.file ? <div className={style.error}>{formik.errors.file}</div> : null} */}
+                            <TextField
+                                variant="outlined"
+                                label="tags(separate with comma)"
+                                margin="normal"
+                                {...formik.getFieldProps('tags')}
 
-                        <TextField
-                            variant="outlined"
-                            label="tags(separate with comma)"
-                            margin="normal"
-                            {...formik.getFieldProps('tag')}
+                            />
+                            {formik.touched.tags &&
+                                formik.errors.tags ? <div className={style.error}>{formik.errors.tags}</div> : null}
+                            <TextField
+                                variant="outlined"
+                                multiline
+                                label="description"
+                                margin="normal"
+                                {...formik.getFieldProps('description')}
 
-                        />
-                        {formik.touched.tag &&
-                            formik.errors.tag ? <div style={{ color: 'red' }}>{formik.errors.tag}</div> : null}
+                            />
+                            {formik.touched.description &&
+                                formik.errors.description ? <div className={style.error}>{formik.errors.description}</div> : null}
+                            <Button
+                                type={'submit'}
+                                variant="contained"
+                                color="primary"
 
-                        <TextField
-                            variant="outlined"
-                            multiline
-                            rows={4}
-                            label="description"
-                            margin="normal"
-                            {...formik.getFieldProps('description')}
-
-                        />
-                        {formik.touched.description &&
-                            formik.errors.description ? <div style={{ color: 'red' }}>{formik.errors.description}</div> : null}
-                        <Button type={'submit'} variant={'contained'} color={'primary'}>Add</Button>
-                    </FormGroup>
-                </FormControl>
-            </form>
+                            >
+                                <SaveIcon /> Add
+                            </Button>
+                        </FormGroup>
+                    </FormControl>
+                </form>
+            </Grid>
         </Paper>
+
     </div>
 }

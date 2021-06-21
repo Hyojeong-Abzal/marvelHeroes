@@ -1,13 +1,13 @@
 import { Button } from '@material-ui/core';
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { setSelectedItemId } from '../app/appReducer';
 import style from './Item.module.css'
-import { NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ReactTypingEffect from 'react-typing-effect';
+import { RoutePath } from '../app/App';
 
 type CharacterPropsType = {
-    id: string
+    id: number
     name: string
     tags: string[]
     description: string
@@ -19,7 +19,6 @@ export const Item: React.FC<CharacterPropsType> = (props) => {
     const dispatch = useDispatch();
 
     const onClickHadler = () => {
-        dispatch(setSelectedItemId(props.id))
     }
     let desc = props.description.substring(0, 145)
     function getRandomInRange(min: number, max: number) {
@@ -46,12 +45,12 @@ export const Item: React.FC<CharacterPropsType> = (props) => {
                     color="primary"
                     onClick={onClickHadler}
                 >
-                    <NavLink
+                    <Link
                         style={{ color: 'white', textDecoration: "none" }}
-                        to={`/Character-description/${props.name.replace(/ /g, "-")}`}
+                        to={RoutePath.CHARACTER_DESCRIPTION + `${props.name}/${props.id}`}
                     >
                         read more
-                    </NavLink>
+                    </Link>
                 </Button>
             </div>
         </div>

@@ -1,64 +1,101 @@
 import { Button } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
 import React from 'react'
-import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppRootStateType } from '../app/store'
 import { ItemType } from '../ItemsList/itemsListReducer'
-import Message from '../components/Jarvis/Message/Message'
+import Message from '../components/Message/Message'
 import { Movies } from '../Movies/Movies'
 import { MovieType, setSearchedMoveisTC } from '../Movies/movieReducer'
-import style from './ItemDesk.module.css'
+import style from './ItemDesc.module.css'
+import { Redirect, useParams } from 'react-router-dom'
+import Grid from '@material-ui/core/Grid/Grid'
+import { useEffect } from 'react'
+
 
 export const ItemDesctiption: React.FC = () => {
-
+    const { itemId, name } = useParams<{ name: string, itemId: string }>()
+    const movies = useSelector<AppRootStateType, MovieType[]>(st => st.movies.movies)
+    const allItems = useSelector<AppRootStateType, ItemType[]>(st => st.itemsList.characters)
     const dispatch = useDispatch();
     useEffect(() => {
-        //@ts-ignore
-        dispatch(setSearchedMoveisTC(item.name))
+        dispatch(setSearchedMoveisTC(name))
     }, [])
-    const movies = useSelector<AppRootStateType, MovieType[]>(st => st.movies.movies)
-    const selectedItemId = useSelector<AppRootStateType, string>(st => st.app.selectedItemId)
-    const allItems = useSelector<AppRootStateType, ItemType[]>(st => st.itemsList.characters)
-    const isFound = useSelector<AppRootStateType, boolean>(st => st.movies.isFound)
 
-    const item = allItems.find(it => it.id === selectedItemId)
+    const item = allItems.find(it => it.id === parseInt(itemId))
+    if (!item) {
+        return <Redirect to={'/404'} />
+    }
+    return <div className={style.wrapper}>
+        <Grid
+            spacing={3}
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
 
-    return (
-        <div className={style.wrapper}>
-            <Paper elevation={10} >
-                <img className={style.img} src={item?.largePicture ? item.largePicture : item?.smallPicture} alt="" />
-            </Paper>
-            <Paper elevation={10} >
-                <div className={style.desc}>
-                    <h1 className={style.title}> {item?.name}</h1>
-                    {item?.tags.map(t => <span className={style.tag}>{t}</span>)}
-                    <div>
-                        <p>{item?.description}</p>
-                        <span>For more information look at </span>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            href={item?.wiki}
-                        >
-                            <a className={style.wiki} href={item?.wiki} target="_blank">Wiki about {item?.name}</a>
-                        </Button>
-                    </div>
-                </div>
-                <div className={style.movies}>
-                    {isFound
-                        ?
-                        <div>
-                            <Message message={`Here some list of movies with title "${item?.name}" :`} />
-                            <Movies movies={movies} />
+        >
+            <Grid item xs={12} >
+                <div className={style.character}>
+                    <Paper elevation={10} >
+                        {
+                            item.largePicture ?
+                                <img className={style.largePicture}
+                                    src={item.largePicture}
+                                    alt="" />
+                                :
+                                <img className={style.smallPicture}
+                                    src={item.smallPicture}
+                                    alt="" />
+                        }
+
+                    </Paper>
+                    <Paper elevation={10} >
+                        <div className={style.desc}>
+                            <h1 className={style.title}> {item.name}</h1>
+                            {item.tags.map(t => <span className={style.tag}>{t}</span>)}
+                            <div>
+                                <p>{item.description}</p>
+                                <span>For more information look at </span>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    href={item.wiki}
+                                >
+                                    <a className={style.wiki}
+                                        href={item.wiki}
+                                        target="_blank">
+                                        Wiki about {item.name}</a>
+                                </Button>
+                            </div>
                         </div>
-                        :
-                        <Message message={` I could'n find any movies with this title "${item?.name}" `} />
-                    }
-
-
+                    </Paper>
                 </div>
-            </Paper>
-        </div>
-    )
+
+            </Grid>
+            <Grid item xs={12}>
+                <Paper elevation={10} >
+
+                    <div className={style.movies}>
+                        {movies.length
+                            ?
+                            <div>
+                                <Message
+                                    message={"Here some list of movies related to this character :"} />
+                                <Movies movies={movies} />
+                            </div>
+                            :
+                            <Message
+                                message={"I could't find any movies related to this character"} />
+                        }
+
+
+                    </div>
+                </Paper>
+            </Grid>
+        </Grid>
+    </div>
+
+
+
 }

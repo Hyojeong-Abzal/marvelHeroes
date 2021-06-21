@@ -35,18 +35,15 @@ export const setIsFound = (isFound: boolean) =>
 
 export const setSearchedMoveisTC = (title: string) => (dispatch: Dispatch) => {
   dispatch(setAppStatus('loading'))
-  searchAPI
-    .searchFilmsByTitle(title)
-    .then((data) => {
-      if (data.Response === 'True') {
-        dispatch(setAppStatus('succeeded'))
-        dispatch(setSearchedMoveis(data.Search))
-      } else {
-        //@ts-ignore
-        dispatch(setAppError(data.Error))
-        dispatch(setAppStatus('failed'))
-      }
-    })
+  searchAPI.searchFilmsByTitle(title).then((data) => {
+    if (data.Response === 'True') {
+      dispatch(setAppStatus('succeeded'))
+      dispatch(setSearchedMoveis(data.Search))
+    } else {
+      dispatch(setAppStatus('failed'))
+      dispatch(setSearchedMoveis([]))
+    }
+  })
 }
 
 //types

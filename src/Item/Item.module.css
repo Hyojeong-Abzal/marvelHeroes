@@ -1,5 +1,5 @@
 .wrapper {
-  width: 500px;
+  width: 360px;
   padding: 10px;
   background-color: white;
 }
@@ -8,6 +8,10 @@
   display: flex;
   justify-content: center;
   border-bottom: 1px solid blue;
+}
+.smallPic img {
+  width: 286px;
+  height: 400px;
 }
 .title {
   font-family: 'Title';

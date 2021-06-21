@@ -1,7 +1,6 @@
 import React from 'react'
 
 export const appInitialState = {
-  selectedItemId: '',
   status: 'normal' as RequestStatusType,
   error: null as string | null,
 }
@@ -11,8 +10,6 @@ export const appReducer = (
   action: ActionType
 ): AppInitialStateType => {
   switch (action.type) {
-    case 'APP/SET_SELECTED_ITEM':
-      return { ...state, selectedItemId: action.itemId }
     case 'APP/SET-STATUS':
       return { ...state, status: action.status }
     case 'APP/SET_ERROR':
@@ -22,8 +19,7 @@ export const appReducer = (
   }
 }
 
-export const setSelectedItemId = (itemId: string) =>
-  ({ type: 'APP/SET_SELECTED_ITEM', itemId } as const)
+
 
 export const setAppStatus = (status: RequestStatusType) =>
   ({ type: 'APP/SET-STATUS', status } as const)
@@ -34,7 +30,6 @@ export const setAppError = (error: ErrorType) =>
 // types
 export type AppInitialStateType = typeof appInitialState
 export type ActionType =
-  | SetSelectedItemType
   | SetAppStatusType
   | SetAppErrorType
 
@@ -43,4 +38,3 @@ export type ErrorType = string | null
 
 export type SetAppErrorType = ReturnType<typeof setAppError>
 export type SetAppStatusType = ReturnType<typeof setAppStatus>
-export type SetSelectedItemType = ReturnType<typeof setSelectedItemId>

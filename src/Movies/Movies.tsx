@@ -11,15 +11,22 @@ type MoviesPropsType = {
 export const Movies = (props: MoviesPropsType) => {
     return (
         <div className={s.wrapper}>
-            <Grid container spacing={5}>
+            <Grid container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                spacing={5}>
                 {
                     props.movies.map(m => {
 
                         return <Grid item key={m.imdbID}>
-                            <Paper>
+                            <Paper elevation={10}>
                                 <div className={s.item}>
                                     <div className={s.img}>
-                                        <img src={m.Poster} />
+                                        <img
+                                            src={m.Poster}
+                                            alt={'some movie related to this character'} 
+                                            />
                                     </div>
                                     <div className={s.desc}>
                                         <div>{m.Title}</div>
@@ -31,10 +38,6 @@ export const Movies = (props: MoviesPropsType) => {
                     })
                 }
             </Grid>
-            <div> {
-                props.movies.map(m => <div> {m.Title}</div>)
-            } </div>
-
         </div>
     )
 }

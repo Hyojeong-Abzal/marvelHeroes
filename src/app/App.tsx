@@ -2,126 +2,56 @@ import React from 'react';
 import { ItemsList } from '../ItemsList/ItemsList';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import style from './App.module.css'
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import { createStyles, fade, Theme, makeStyles } from '@material-ui/core/styles';
-import SearchIcon from '@material-ui/icons/Search';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppRootStateType } from './store';
 import { ItemDesctiption } from '../ItemDesc/ItemDescription';
-import { ItemType } from '../ItemsList/itemsListReducer';
 import { RequestStatusType, setAppError } from './appReducer';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { ErrorSnackbar } from '../components/ErrorSnackbar/ErrorSnackbar';
+import Message from '../components/Message/Message';
+import marvelLogoURL from "../assets/images/marvel-logo.png";
+import Button from '@material-ui/core/Button/Button';
+import { AddBox } from '@material-ui/icons';
+import { useState } from 'react';
 import { AddItem } from '../components/AddItem/AddItem';
+import { ExAdd } from '../components/AddItem/exAddItem';
 
-
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    title: {
-      flexGrow: 1,
-      display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
-    },
-    search: {
-      position: 'relative',
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
-      '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
-      },
-      marginLeft: 0,
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-      },
-    },
-    searchIcon: {
-      padding: theme.spacing(0, 2),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputRoot: {
-      color: 'inherit',
-    },
-    inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
-        },
-      },
-    },
-  }),
-);
-
-
+export const RoutePath = {
+  CHARACTER_DESCRIPTION: "/Character-description/"
+}
 
 function App() {
+  const [editMode, setEditMode] = useState(false)
   const dispatch = useDispatch();
-  const classes = useStyles();
-  const status = useSelector<AppRootStateType, RequestStatusType>(st => st.app.status)
-  const selectedItemId = useSelector<AppRootStateType, string>(st => st.app.selectedItemId)
-  const allItems = useSelector<AppRootStateType, ItemType[]>(st => st.itemsList.characters)
-  const item = allItems.find(it => it.id === selectedItemId)
+  const status = useSelector<AppRootStateType, RequestStatusType>(st => st.app.status);
   const isOnline = navigator.onLine
   if (!isOnline) {
     dispatch(setAppError("No internet connection"))
     return <ErrorSnackbar />
   }
+
   return (
     <div className={style.app}>
-      
-      <ErrorSnackbar />
-      <div className={classes.root}>
-        <AppBar position="static" >
-          <Toolbar>
-
-            <Typography className={classes.title} variant="h6" noWrap>
-              MARVEL
-            </Typography>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </div>
-          </Toolbar>
-          {status === 'loading' && <LinearProgress />}
-        </AppBar>
+      <ExAdd />
+      <div className={style.header}>
+        <img className={style.logo} src={marvelLogoURL} alt="" />
+        <Button
+          onClick={() => setEditMode(true)}
+          variant="contained"
+          color="primary"
+          endIcon={<AddBox style={{ color: "white" }} />}
+          className={style.addBtn}
+        >
+          Add new character
+        </Button>
       </div>
+      <ErrorSnackbar />
+      {status === 'loading' && <LinearProgress />}
+      {editMode && <AddItem onClickHandler={setEditMode} />}
       <Switch>
         <Route exact path={"/"} render={() => <ItemsList />} />
-        <Route path={`/Character-description/${item?.name.trim().replace(/ /g, "-")}`} render={() => <ItemDesctiption />} />
-        <Route path={"/404"} render={() => <h1> 404: PAGE NOT FOUND</h1>} />
+        <Route path={`/Character-description/:name/:itemId`} render={() => <ItemDesctiption />} />
+        <Route path={"/404"} render={() => <Message message={"There is some error occured code '404 not found'."} link={"/"} />} />
         <Redirect from={"*"} to={'/404'} />
       </Switch>
 
@@ -130,5 +60,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
