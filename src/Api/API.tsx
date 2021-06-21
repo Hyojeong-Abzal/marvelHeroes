@@ -2,7 +2,7 @@ import axios from 'axios';
 import {  MovieType } from '../Movies/movieReducer';
 
 const configOMB = {
-    baseURL: 'http://www.omdbapi.com',
+    baseURL: 'https://www.omdbapi.com',
 };
 const key = '?apikey=baf8dd6e';
 const axiosInstance = axios.create(configOMB);

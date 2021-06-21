@@ -1,18 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 import style from './ItemsList.module.css'
 import { useSelector } from 'react-redux'
 import { ItemType } from './itemsListReducer'
 import { AppRootStateType } from '../app/store'
 import { Item } from '../Item/Item'
-import { Grid, Paper } from '@material-ui/core'
+import { Button, Grid, Paper } from '@material-ui/core'
 import { Redirect } from 'react-router-dom'
 import { AddItem } from '../components/AddItem/AddItem'
+import { AddBox } from '@material-ui/icons'
 
 
 export const ItemsList: React.FC = () => {
+  const [editMode, setEditMode] = useState(false)
     const items = useSelector<AppRootStateType, ItemType[]>(state => state.itemsList.characters)
     return (
         <div className={style.wrapper}>
+            <Button
+                onClick={() => setEditMode(true)}
+                variant="contained"
+                color="primary"
+                endIcon={<AddBox style={{ color: "white" }} />}
+                className={style.addBtn}
+            >
+                Add new character
+            </Button>
+
+            {editMode && <AddItem onClickHandler={setEditMode} />}
             <Grid
                 container
                 spacing={3}

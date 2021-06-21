@@ -21,7 +21,6 @@ export const RoutePath = {
 }
 
 function App() {
-  const [editMode, setEditMode] = useState(false)
   const dispatch = useDispatch();
   const status = useSelector<AppRootStateType, RequestStatusType>(st => st.app.status);
   const isOnline = navigator.onLine
@@ -32,22 +31,12 @@ function App() {
 
   return (
     <div className={style.app}>
-      <ExAdd />
       <div className={style.header}>
         <img className={style.logo} src={marvelLogoURL} alt="" />
-        <Button
-          onClick={() => setEditMode(true)}
-          variant="contained"
-          color="primary"
-          endIcon={<AddBox style={{ color: "white" }} />}
-          className={style.addBtn}
-        >
-          Add new character
-        </Button>
       </div>
       <ErrorSnackbar />
       {status === 'loading' && <LinearProgress />}
-      {editMode && <AddItem onClickHandler={setEditMode} />}
+
       <Switch>
         <Route exact path={"/"} render={() => <ItemsList />} />
         <Route path={`/Character-description/:name/:itemId`} render={() => <ItemDesctiption />} />
