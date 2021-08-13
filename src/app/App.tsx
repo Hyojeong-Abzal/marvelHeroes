@@ -38,7 +38,7 @@ function App() {
       {status === 'loading' && <LinearProgress />}
 
       <Switch>
-        <Route exact path={"/marvelHeroes"} render={() => <ItemsList />} />
+        <Route exact path={"/"} render={() => <ItemsList />} />
         <Route path={`/Character-description/:name/:itemId`} render={() => <ItemDesctiption />} />
         <Route path={"/404"} render={() => <Message message={"There is some error occured code '404 not found'."} link={"/marvelHeroes"} />} />
         <Redirect from={"*"} to={'/404'} />
